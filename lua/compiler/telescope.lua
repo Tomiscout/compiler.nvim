@@ -20,16 +20,14 @@ function M.show()
   local utils = require("compiler.utils")
   local utils_bau = require("compiler.utils-bau")
 
-  local buffer = vim.api.nvim_get_current_buf()
+  local buffer = utils.get_compiler_buffer()
   local filetype = vim.api.nvim_get_option_value("filetype", { buf = buffer })
-
 
   -- POPULATE
   -- ========================================================================
 
   -- Programatically require the backend for the current language.
   local language = utils.require_language(filetype)
-
   -- On unsupported languages, default to make.
   if not language then language = utils.require_language("make") or {} end
 
@@ -97,6 +95,7 @@ function M.show()
         _G.compiler_redo_bau = nil
       end
 
+      _G.last_non_overseer_buffer = buffer
     end
   end
 
@@ -104,9 +103,14 @@ function M.show()
   -- SHOW TELESCOPE
   -- ========================================================================
   local function open_telescope()
+    local header_title = "Compiler"
+    if language.header_title and #language.header_title > 0 then
+      header_title = header_title .. " - " .. language.header_title
+    end
+
     pickers
       .new({}, {
-        prompt_title = "Compiler",
+        prompt_title = header_title,
         results_title = "Options",
         finder = finders.new_table {
           results = language.options,

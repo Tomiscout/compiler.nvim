@@ -144,4 +144,19 @@ function M.os_path(path)
   return string.gsub(path, '[/\\]', separator)
 end
 
+---Gets current buffer if it has a name, otherwise get last non_overseer buffer
+function M.get_compiler_buffer()
+  local buffer = vim.api.nvim_get_current_buf()
+  if _G.last_non_overseer_buffer == nil or not vim.api.nvim_buf_is_loaded(_G.last_non_overseer_buffer) then
+    return buffer
+  end
+
+  if vim.api.nvim_buf_get_name(buffer) == '' or vim.api.nvim_get_option_value("filetype", { buf = buffer }) == '' then
+    buffer = _G.last_non_overseer_buffer
+  end
+  return buffer
+end
+
+
+
 return M
