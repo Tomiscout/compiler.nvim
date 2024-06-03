@@ -185,7 +185,6 @@ function M.action(selected_option)
     if selected_option:match("^run_") then
         local project_path = selected_option:sub(5)
         cmd = "dotnet run --project '" .. project_path .. "'"
-        vim.notify(cmd)
         final_message = "Running " .. extract_filename(project_path)
     elseif selected_option:match("^build_") then
         local project_path = selected_option:sub(7)
