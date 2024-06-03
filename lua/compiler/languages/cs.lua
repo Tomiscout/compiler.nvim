@@ -158,18 +158,6 @@ local function printTable(t, indent)
     end
 end
 
-local function build_dotnet_command(command, final_message)
-    if not csproj_file then
-        print("No .csproj file found.")
-        return nil
-    end
-
-    -- Construct the command for overseer
-    local cmd = "dotnet " .. command .. " --project '" .. csproj_file .. "'" .. " && echo '" .. final_message .. "'"
-
-    return cmd
-end
-
 --- Frontend  - options displayed on telescope
 
 if sln_file ~= nil then
@@ -197,10 +185,11 @@ function M.action(selected_option)
     if selected_option:match("^run_") then
         local project_path = selected_option:sub(5)
         cmd = "dotnet run --project '" .. project_path .. "'"
+        vim.notify(cmd)
         final_message = "Running " .. extract_filename(project_path)
     elseif selected_option:match("^build_") then
         local project_path = selected_option:sub(7)
-        cmd = "dotnet build --project '" .. project_path .. "'"
+        cmd = "dotnet build '" .. project_path .. "'"
         final_message = "Built " .. extract_filename(project_path)
     elseif selected_option == "solution_build" and sln_file then
         cmd = "dotnet build " .. sln_file
